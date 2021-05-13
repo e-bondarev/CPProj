@@ -12,3 +12,5 @@ file(GLOB src
 )
 
 add_executable(Projector ${src})
+
+target_include_directories(Projector PUBLIC src/external)
