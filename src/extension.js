@@ -2,8 +2,35 @@ const vscode = require('vscode');
 
 const files = require('./files');
 const templates = require('./templates');
+const webviewAssembler = require('./webviewAssembler');
+
+function createStructure(projectData) {
+	console.log('Creating structure..');
+	
+	files.createFile('CMakeLists.txt', templates.cmake, [
+		{ name: 'PARAM_PROJECTOR_PROJECT_NAME', value: projectData.name },
+		{ name: 'PARAM_PROJECTOR_APP_NAME', value: projectData.appOrLibName }
+	]);
+
+	files.createFile('.gitignore', templates.gitignore);
+
+	files.createDir('src');
+	files.createFile('src/main.cpp', templates.main);
+	files.createFile('src/pch.h', templates.pch);
+
+	console.log(projectData);
+}
 
 function activate(context) {
+	const htmlFile = webviewAssembler.fromDir(
+		`${context.extensionPath}/layout`,
+		'index.html',
+		'main.js',
+		'style.css', [
+			'external/vue.js'
+		]
+	);
+
 	context.subscriptions.push(vscode.commands.registerCommand('catCoding.start', function () {
 		const panel = vscode.window.createWebviewPanel(
 			'catCoding',
@@ -17,9 +44,8 @@ function activate(context) {
 		panel.webview.onDidReceiveMessage(
 			message => {
 				switch (message.command) {
-					case 'createCmakeLists':
-						console.log('Creating CMakeLists.txt..');
-						files.createFile('CMakeLists.txt', templates.cmake);
+					case 'createStructure':
+						createStructure(message.projectData);
 						return;
 				}
 			},
@@ -27,34 +53,8 @@ function activate(context) {
 			context.subscriptions
 		);
 
-		panel.webview.html = getWebviewContent();
+		panel.webview.html = htmlFile;
 	}));
-}
-
-function getWebviewContent() {
-	return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cat Coding</title>
-</head>
-<body>
-	<button onclick="createCmakeLists()">
-		Create CMakeLists.txt
-	</button>
-</body>
-<script>
-	const vscode = acquireVsCodeApi();
-
-	function createCmakeLists()
-	{
-		vscode.postMessage({
-			command: 'createCmakeLists'
-		});
-	}
-</script>
-</html>`;
 }
 
 // this method is called when your extension is deactivated

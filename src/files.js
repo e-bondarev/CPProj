@@ -14,11 +14,26 @@ const deleteIfExists = async function(path) {
     }
 }
 
-const createFile = async function(path, content = '') {
-    const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath; // gets the path of the first workspace folder
+const createDir = async function(path) {    
+    const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const filePath = wsPath + '/' + path;
+
+    const dirExists = await fs.existsSync(filePath);
+
+    if (dirExists) return;
+
+    await fs.mkdirSync(filePath);
+}
+
+const createFile = async function(path, content, params = []) {
+    const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
     
     await deleteIfExists(filePath);
+
+    for (var i = 0; i < params.length; i++) {
+        content = content.replaceAll(params[i].name, params[i].value);
+    }
 
     fs.appendFile(filePath, content, function (err) {
         if (err) throw err;
@@ -26,7 +41,13 @@ const createFile = async function(path, content = '') {
     });
 }
 
+const readFile = function(path) {
+    return fs.readFileSync(path);
+}
+
 module.exports = {
-    deleteIfExists,    
-    createFile
+    deleteIfExists,
+    createDir,
+    createFile,
+    readFile
 };

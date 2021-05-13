@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Coding</title>
+</head>
+<body>
+	<div id="app">
+		<div class="option">
+			<input placeholder="Project name" type="text" v-model="project.name">
+		</div>
+
+		<div class="option">
+			<input type="radio" id="application" value="Application" v-model="project.type">
+			<label for="application">Application</label>
+			<br>
+			<input type="radio" id="library" value="Library" v-model="project.type">
+			<label for="library">Library</label>
+		</div>
+
+		<div class="option">
+			<input placeholder="Application or library name" v-model="project.appOrLibName">
+		</div>
+
+		<button @click="createStructure">
+			Create structure
+		</button>
+	</div>
+</body>
+</html>
