@@ -6,6 +6,15 @@
     margin-bottom: 10px;
 }
 
-input {
+input, select {
     padding: 10px 5px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.secondary-settings, .submodules {
+    margin-left: 20px;
 }

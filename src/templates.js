@@ -1,24 +1,26 @@
 const cmake =
 `cmake_minimum_required(VERSION 3.16)
 
-set(PROJECTOR_PROJECT_NAME PARAM_PROJECTOR_PROJECT_NAME)
-set(PROJECTOR_APP_NAME     PARAM_PROJECTOR_APP_NAME)
+set(PROJECTOR_PROJECT_NAME      PARAM_PROJECTOR_PROJECT_NAME)
+set(PROJECTOR_PROJECT_VERSION   PARAM_PROJECTOR_PROJECT_VERSION)
+set(PROJECTOR_APP_NAME          PARAM_PROJECTOR_APP_NAME)
+set(PROJECTOR_SRC_DIR_NAME      PARAM_PROJECTOR_SRC_DIR_NAME)
 
-project(\${PROJECTOR_PROJECT_NAME} VERSION 0.0.1)
+project(\${PROJECTOR_PROJECT_NAME} VERSION \${PROJECTOR_PROJECT_VERSION})
 
 file(GLOB src 
-    src/*.cpp
-    src/**/*.cpp
-    src/**/**/*.cpp
-    src/**/**/**/*.cpp
-    src/**/**/**/**/*.cpp
-    src/**/**/**/**/**/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/**/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/**/**/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/**/**/**/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/**/**/**/**/*.cpp
+    \${PROJECTOR_SRC_DIR_NAME}/**/**/**/**/**/*.cpp
 )
 
 add_executable(\${PROJECTOR_APP_NAME} \${src})
 
-target_include_directories(\${PROJECTOR_APP_NAME} PUBLIC src)
-target_precompile_headers(\${PROJECTOR_APP_NAME} PUBLIC src/pch.h)
+target_include_directories(\${PROJECTOR_APP_NAME} PUBLIC \${PROJECTOR_SRC_DIR_NAME})
+target_precompile_headers(\${PROJECTOR_APP_NAME} PUBLIC \${PROJECTOR_SRC_DIR_NAME}/PARAM_PROJECTOR_PCH_NAME)
 `;
 
 const main = 
