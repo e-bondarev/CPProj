@@ -2,8 +2,8 @@ const vscode = require('vscode');
 
 const fs = require('fs');
 
-const deleteIfExists = async function(path) {
-    const fileExists = await fs.existsSync(path);
+const deleteIfExists = function(path) {
+    const fileExists = fs.existsSync(path);
 
     if (fileExists) {
         try {
@@ -14,31 +14,28 @@ const deleteIfExists = async function(path) {
     }
 }
 
-const createDir = async function(path) {    
+const createDir = function(path) {
     const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
 
-    const dirExists = await fs.existsSync(filePath);
+    const dirExists = fs.existsSync(filePath);
 
     if (dirExists) return;
 
-    await fs.mkdirSync(filePath);
+    fs.mkdirSync(filePath);
 }
 
-const createFile = async function(path, content, params = []) {
+const createFile = function(path, content, params = []) {
     const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
     
-    await deleteIfExists(filePath);
+    deleteIfExists(filePath);
 
     for (var i = 0; i < params.length; i++) {
         content = content.replaceAll(params[i].name, params[i].value);
     }
 
-    fs.appendFile(filePath, content, function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-    });
+    fs.appendFileSync(filePath, content);
 }
 
 const readFile = function(path) {

@@ -11,12 +11,19 @@ new Vue({
             version: '0.0.1',
             type: 'Application',
             appOrLibName: 'ProjectorApp',
-            external: 'External',
-            src: 'Source',
-            build: 'Build',
+            dirs: {
+                external: 'External',
+                src: 'Source',
+                build: 'Build',
+            },
             codeCase: 'pascal',
+            pch: 'pch',
+            formats: {
+                source: 'cpp',
+                header: 'h'
+            },
             submodules: [
-                { url: 'https://github.com/glfw/glfw', name: 'glfw' }
+                { url: 'https://github.com/glfw/glfw', name: 'glfw', cmake: '', lib: 'glfw', include: 'include' }
             ]
         }
     },

@@ -6,6 +6,29 @@
     margin-bottom: 10px;
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+input:not([type=radio]):not(.smaller) {
+    width: calc(100% - 10px);
+}
+
+.card {
+    border: 2px solid #535353;
+    border-radius: 5px;
+    padding: 0px 9px;
+    margin-bottom: 5px;
+}
+
+.card__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 input, select {
     padding: 10px 5px;
 }
