@@ -78,8 +78,6 @@ function openPanel(context, pathToExtensionRoot, htmlFile) {
 }
 
 function createClass(context, pathToExtensionRoot, htmlFile, e) {
-	console.log(e);
-
 	const panel = vscode.window.createWebviewPanel(
 		'createClass',
 		'Create class',
@@ -94,7 +92,7 @@ function createClass(context, pathToExtensionRoot, htmlFile, e) {
 			switch (message.command) {
 				case 'createClass':
 					const { createClass } = require('./createClass');
-					message.classData.where = e.fsPath;
+					message.classData.where = e ? e.fsPath : undefined;
 					createClass(message.classData, pathToExtensionRoot);
 			}
 		},
@@ -127,7 +125,7 @@ function activate(context) {
 	]);
 
 	openPanel(context, pathToExtensionRoot, htmlFile);	
-	createClass(context, pathToExtensionRoot, createClassHtml, { path: 'foo' });
+	createClass(context, pathToExtensionRoot, createClassHtml);
 
 	context.subscriptions.push(vscode.commands.registerCommand('cpproj.start', function () {
 		openPanel(context, pathToExtensionRoot, htmlFile);

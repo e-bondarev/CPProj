@@ -27,7 +27,7 @@ const createDir = function(path) {
     fs.mkdirSync(filePath);
 }
 
-const createFile = function(path, content, params = [], then) {
+const createFile = function(path, content, params = []) {
     const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
     

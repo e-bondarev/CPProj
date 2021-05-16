@@ -2,18 +2,8 @@ const vscode = require('vscode');
 
 const files = require('./files');
 const git = require('./git');
-
-const {
-	camelCase,
-	pascalCase,
-	snakeCase
-} = require('change-case');
-
-const convertion = {
-	camel: camelCase,
-	pascal: pascalCase,
-	snake: snakeCase
-};
+const convert = require('./convertion');
+const util = require('./util');
 
 const defaultStructure = [
 	{ 
@@ -34,8 +24,8 @@ const defaultStructure = [
 
 			PARAM_PROJECTOR_APP_NAME:        proj => proj.appOrLibName,
 
-			PARAM_PROJECTOR_SRC_DIR_NAME:    proj => convertion[proj.codeCase](proj.dirs.src),
-			PARAM_PROJECTOR_PCH_NAME:		 proj => `${convertion[proj.codeCase](proj.pch)}.${proj.formats.header}`,
+			PARAM_PROJECTOR_SRC_DIR_NAME:    proj => convert.toCase(proj.dirs.src, proj.codeCase),
+			PARAM_PROJECTOR_PCH_NAME:		 proj => `${convert.toCase(proj.pch, proj.codeCase)}.${proj.formats.header}`,
 			PARAM_PROJECTOR_SOURCE_FORMAT: 	 proj => proj.formats.source
 		}
 	},
@@ -51,10 +41,15 @@ const defaultStructure = [
 	}
 ];
 
-function loadTemplate(pathToTemplate) {
-	console.log(pathToTemplate);
-	const content = files.readFile(pathToTemplate).toString();
-	return content;
+function index(obj, string) {
+    const levels = string.split('.');
+    var currentObject = obj;
+    
+    for (let i = 0; i < levels.length; i++) {
+        currentObject = currentObject[levels[i]];
+    }
+    
+    return currentObject;
 }
 
 function getTokens(string) {
@@ -75,17 +70,6 @@ function getTokens(string) {
 	return tokens;
 }
 
-function index(obj, string) {
-    const levels = string.split('.');
-    var currentObject = obj;
-    
-    for (let i = 0; i < levels.length; i++) {
-        currentObject = currentObject[levels[i]];
-    }
-    
-    return currentObject;
-}
-
 function processString(string, projectData) {
 	const tokens = getTokens(string);
 
@@ -97,10 +81,6 @@ function processString(string, projectData) {
 }
 
 function createStructure(structure, pathToExtensionRoot, projectData) {
-	// projectData.dirs.src = convertion[projectData.codeCase](projectData.dirs.src);
-	// projectData.dirs.external = convertion[projectData.codeCase](projectData.dirs.external);
-	// projectData.dirs.build = convertion[projectData.codeCase](projectData.dirs.build);
-
 	for (var i = 0; i < structure.length; i++) {
 		const path = structure[i].path.split('/');
 
@@ -114,17 +94,11 @@ function createStructure(structure, pathToExtensionRoot, projectData) {
 			const isFile = path[j].includes('.');
 
 			if (!isFile) {
-				let finalDirName = path[j];
-
-				// if (!structure[i].keepCase) {
-				// 	finalDirName = convertion[projectData.codeCase](path[j]);
-				// }
-
+				const finalDirName = path[j];
 				files.createDir(`${depth}${finalDirName}`);
 				depth += `${finalDirName}/`;
 			} else {
-				const template = loadTemplate(`${pathToExtensionRoot}/${structure[i].template}`);
-
+				const template = files.readFile(`${pathToExtensionRoot}/${structure[i].template}`).toString();
 				const params = [];
 
 				if (structure[i].params) {
@@ -142,7 +116,7 @@ function createStructure(structure, pathToExtensionRoot, projectData) {
 					const splitFileName = path[j].split('.');
 					const rawFileName = splitFileName[0];
 					const format = splitFileName[1];
-					finalFileName = `${convertion[projectData.codeCase](rawFileName)}.${format}`;
+					finalFileName = `${convert.toCase(rawFileName, projectData.codeCase)}.${format}`;
 				}
 
 				files.createFile(`${depth}${finalFileName}`, template, params);
@@ -159,11 +133,13 @@ function submoduleExists(pathToSubmodule) {
 	return files.entityExists(pathToSubmodule);
 }
 
-async function addSubmodules(workspace, submodules, externalDir) {
+async function addSubmodules(submodules, externalDir) {
+	files.createFile('.gitmodules', '');
+
 	for (let i = 0; i < submodules.length; i++) {
-		if (validSubmodule(submodules[i]) && !submoduleExists(`${workspace}/${externalDir}/${submodules[i].name}`)) {
+		if (validSubmodule(submodules[i]) && !submoduleExists(`${util.workspace()}/${externalDir}/${submodules[i].name}`)) {
 			console.log('I\'m really adding a new submodule..');
-			await git.addSubmodule(submodules[i].url, `${externalDir}/${submodules[i].name}`, workspace);
+			await git.addSubmodule(submodules[i].url, `${externalDir}/${submodules[i].name}`, util.workspace());
 		}
 	}
 }
@@ -172,8 +148,8 @@ function createConfig(projectData) {
 	files.createFile('.cpproj.json', JSON.stringify(projectData, null, 2));
 }
 
-function addSubmodulesInCMakeLists(workspace, projectData) {
-	let currentCMakeFile = files.readFile(`${workspace}/CMakeLists.txt`).toString();
+function addSubmodulesInCMakeLists(projectData) {
+	let currentCMakeFile = files.readFile(`${util.workspace()}/CMakeLists.txt`).toString();
 
 	for (let i = 0; i < projectData.submodules.length; i++) {
 		if (validSubmodule(projectData.submodules[i])) {
@@ -193,12 +169,9 @@ function addSubmodulesInCMakeLists(workspace, projectData) {
 }
 
 async function create(projectData, pathToExtensionRoot) {
-	const workspace = vscode.workspace.workspaceFolders[0].uri.fsPath;
-
 	createStructure(defaultStructure, pathToExtensionRoot, projectData);
 	createConfig(projectData);
-	await addSubmodules(workspace, projectData.submodules, projectData.dirs.external);
-
+	await addSubmodules(projectData.submodules, projectData.dirs.external);
 	addSubmodulesInCMakeLists(workspace, projectData);
 }
 
