@@ -14,13 +14,15 @@ const deleteIfExists = function(path) {
     }
 }
 
+const entityExists = function(path) {
+    return fs.existsSync(path);
+}
+
 const createDir = function(path) {
     const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
 
-    const dirExists = fs.existsSync(filePath);
-
-    if (dirExists) return;
+    if (entityExists(filePath)) return;
 
     fs.mkdirSync(filePath);
 }
@@ -44,6 +46,7 @@ const readFile = function(path) {
 
 module.exports = {
     deleteIfExists,
+    entityExists,    
     createDir,
     createFile,
     readFile

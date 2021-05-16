@@ -7,25 +7,38 @@ new Vue({
     data: {
         vscode: acquireVsCodeApi(),
         project: {
-            name: 'ProjectorProject',
-            version: '0.0.1',
-            type: 'Application',
-            appOrLibName: 'ProjectorApp',
+            name: '',
+            version: '',
+            type: '',
+            appOrLibName: '',
             dirs: {
-                external: 'External',
-                src: 'Source',
-                build: 'Build',
+                external: '',
+                src: '',
+                build: '',
             },
-            codeCase: 'pascal',
-            pch: 'pch',
+            codeCase: '',
+            pch: '',
             formats: {
-                source: 'cpp',
-                header: 'h'
+                source: '',
+                header: ''
             },
             submodules: [
-                { url: 'https://github.com/glfw/glfw', name: 'glfw', cmake: '', lib: 'glfw', include: 'include' }
             ]
         }
+    },
+    mounted() {
+        this.vscode.postMessage({
+            command: 'requireProjectData'
+        });
+        
+        window.addEventListener('message', event => {
+            const message = event.data;            
+            switch (message.command) {
+                case 'loadProjectData':
+                    this.project = message.projectData;
+                    break;
+            }
+        });
     },
     methods: {
         createStructure() {
@@ -40,7 +53,9 @@ new Vue({
         },
 
         removeSubmodule(i) {
-            this.project.submodules.splice(i, 1);
+            const reverseOrder = true;
+            const reversingVariable = reverseOrder ? this.project.submodules.length - 1 : 0;
+            this.project.submodules.splice(reversingVariable - i, 1);
         },
 
         codeCaseChanged(event) {

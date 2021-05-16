@@ -7,6 +7,12 @@
 </head>
 <body>
 	<div id="app">
+		<h1>Welcome to CPProj</h1>
+	
+		<button @click="createStructure">
+			Create structure
+		</button>
+		
 		<div class="container">
 			<div class="primary-settings">
 				<h2>Primary settings</h2>
@@ -82,11 +88,14 @@
 			</div>
 
 			<div class="submodules">
-				<h2>Submodules</h2>
+				<div class="row">
+					<h2>Submodules</h2>
+					<button @click="addSubmodule()">Add</button>
+				</div>
 
-				<div class="card" v-for="(submodule, i) in project.submodules" :key="i">
+				<div class="card" v-for="(submodule, i) in project.submodules.slice().reverse()" :key="i">
 					<div class="card__title">
-						<h3>Submodule {{ i }}</h3>
+						<h3>Submodule {{ project.submodules.length - i }}</h3>
 						<button @click="removeSubmodule(i)">X</button>
 					</div>
 					<div class="option">
@@ -99,13 +108,8 @@
 						<input class="smaller" placeholder="include" type="text" v-model="submodule.include">
 					</div>					
 				</div>
-				<button @click="addSubmodule()">Add</button>
 			</div>
 		</div>
-	
-		<button @click="createStructure">
-			Create structure
-		</button>
 	</div>
 </body>
 </html>

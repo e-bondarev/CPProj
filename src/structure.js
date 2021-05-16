@@ -97,6 +97,10 @@ function processString(string, projectData) {
 }
 
 function createStructure(structure, pathToExtensionRoot, projectData) {
+	// projectData.dirs.src = convertion[projectData.codeCase](projectData.dirs.src);
+	// projectData.dirs.external = convertion[projectData.codeCase](projectData.dirs.external);
+	// projectData.dirs.build = convertion[projectData.codeCase](projectData.dirs.build);
+
 	for (var i = 0; i < structure.length; i++) {
 		const path = structure[i].path.split('/');
 
@@ -112,9 +116,9 @@ function createStructure(structure, pathToExtensionRoot, projectData) {
 			if (!isFile) {
 				let finalDirName = path[j];
 
-				if (!structure[i].keepCase) {
-					finalDirName = convertion[projectData.codeCase](path[j]);
-				}
+				// if (!structure[i].keepCase) {
+				// 	finalDirName = convertion[projectData.codeCase](path[j]);
+				// }
 
 				files.createDir(`${depth}${finalDirName}`);
 				depth += `${finalDirName}/`;
@@ -147,11 +151,20 @@ function createStructure(structure, pathToExtensionRoot, projectData) {
 	}
 }
 
+function validSubmodule(submodule) {
+	return submodule.url && submodule.name && submodule.include;
+}
+
+function submoduleExists(pathToSubmodule) {
+	return files.entityExists(pathToSubmodule);
+}
+
 async function addSubmodules(workspace, submodules, externalDir) {
-	for (var i = 0; i < submodules.length; i++)
-	{
-		if (!!submodules[i].url && !!submodules[i].name)		
+	for (let i = 0; i < submodules.length; i++) {
+		if (validSubmodule(submodules[i]) && !submoduleExists(`${workspace}/${externalDir}/${submodules[i].name}`)) {
+			console.log('I\'m really adding a new submodule..');
 			await git.addSubmodule(submodules[i].url, `${externalDir}/${submodules[i].name}`, workspace);
+		}
 	}
 }
 
@@ -163,12 +176,17 @@ function addSubmodulesInCMakeLists(workspace, projectData) {
 	let currentCMakeFile = files.readFile(`${workspace}/CMakeLists.txt`).toString();
 
 	for (let i = 0; i < projectData.submodules.length; i++) {
-		const pathToCMakeLists = projectData.submodules[i].cmake ? `/${projectData.submodules[i].cmake}` : '';
-		const pathToInclude = projectData.submodules[i].include ? `/${projectData.submodules[i].include}` : '';
-		currentCMakeFile += '\n\n';
-		currentCMakeFile += `add_subdirectory(${projectData.dirs.external}/${projectData.submodules[i].name}${pathToCMakeLists})\n`;
-		currentCMakeFile += `target_link_libraries(\${PROJECTOR_APP_NAME} ${projectData.submodules[i].lib})\n`;
-		currentCMakeFile += `target_include_directories(\${PROJECTOR_APP_NAME} PUBLIC ${projectData.dirs.external}/${projectData.submodules[i].name}${pathToInclude})`;
+		if (validSubmodule(projectData.submodules[i])) {
+			const pathToCMakeLists = projectData.submodules[i].cmake ? `/${projectData.submodules[i].cmake}` : '';
+			const pathToInclude = projectData.submodules[i].include ? `/${projectData.submodules[i].include}` : '';
+			currentCMakeFile += '\n\n';
+			currentCMakeFile += `add_subdirectory(${projectData.dirs.external}/${projectData.submodules[i].name}${pathToCMakeLists})\n`;
+			currentCMakeFile += `target_include_directories(\${PROJECTOR_APP_NAME} PUBLIC ${projectData.dirs.external}/${projectData.submodules[i].name}${pathToInclude})`;
+			if (projectData.submodules[i].lib.length) {
+				currentCMakeFile += '\n';
+				currentCMakeFile += `target_link_libraries(\${PROJECTOR_APP_NAME} ${projectData.submodules[i].lib})`;
+			}
+		}
 	}
 
 	files.createFile(`CMakeLists.txt`, currentCMakeFile);
@@ -180,21 +198,6 @@ async function create(projectData, pathToExtensionRoot) {
 	createStructure(defaultStructure, pathToExtensionRoot, projectData);
 	createConfig(projectData);
 	await addSubmodules(workspace, projectData.submodules, projectData.dirs.external);
-
-	// projectData.submodules = [
-	// 	{
-	// 		name: 'glfw',
-	// 		cmake: '',
-	// 		lib: 'glfw',
-	// 		include: 'include',
-	// 	},
-	// 	{
-	// 		name: 'glew',
-	// 		cmake: 'build/cmake',
-	// 		lib: 'glew_s',
-	// 		include: 'include'
-	// 	}
-	// ];
 
 	addSubmodulesInCMakeLists(workspace, projectData);
 }

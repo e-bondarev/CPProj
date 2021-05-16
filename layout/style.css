@@ -9,6 +9,7 @@
 .row {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
 }
 
@@ -36,6 +37,8 @@ input, select {
 .container {
     display: flex;
     flex-direction: row;
+    margin-top: 10px;
+    border-top: 1px solid #535353;
 }
 
 .secondary-settings, .submodules {
