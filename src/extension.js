@@ -3,14 +3,15 @@ const vscode = require('vscode');
 const webviewAssembler = require('./webviewAssembler');
 const structure = require('./structure');
 const files = require('./files');
+const util = require('./util');
 
-function workspace() {
-	return vscode.workspace.workspaceFolders[0].uri.fsPath;
-}
+// function workspace() {
+// 	return vscode.workspace.workspaceFolders[0].uri.fsPath;
+// }
 
-function configPath() {
-	return `${workspace()}/.cpproj.json`;
-}
+// function configPath() {
+// 	return `${workspace()}/.cpproj.json`;
+// }
 
 function getDefaultProjectData() {
 	return {
@@ -36,8 +37,8 @@ function getDefaultProjectData() {
 function openPanel(context, pathToExtensionRoot, htmlFile) {
 	let projectData = getDefaultProjectData();
 
-	if (files.entityExists(configPath())) {
-		const configFileContent = files.readFile(configPath()).toString();
+	if (files.entityExists(util.configPath())) {
+		const configFileContent = files.readFile(util.configPath()).toString();
 		projectData = JSON.parse(configFileContent);
 	}
 
@@ -76,11 +77,49 @@ function openPanel(context, pathToExtensionRoot, htmlFile) {
 	panel.webview.html = htmlFile;
 }
 
+function createClass(context, pathToExtensionRoot, htmlFile, e) {
+	console.log(e);
+
+	const panel = vscode.window.createWebviewPanel(
+		'createClass',
+		'Create class',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+
+	panel.webview.onDidReceiveMessage(
+		async message => {
+			switch (message.command) {
+				case 'createClass':
+					const { createClass } = require('./createClass');
+					message.classData.where = e.fsPath;
+					createClass(message.classData, pathToExtensionRoot);
+			}
+		},
+		undefined,
+		context.subscriptions
+	);
+
+	panel.webview.html = htmlFile;
+}
+
 function activate(context) {
 	const pathToExtensionRoot = context.extensionPath;
 
 	const htmlFile = webviewAssembler.fromDir(
-		`${pathToExtensionRoot}/layout`,
+		pathToExtensionRoot,
+		'layout',
+		'index.html',
+		'main.js',
+		'style.css', [
+		'external/vue.js'
+	]);
+
+	const createClassHtml = webviewAssembler.fromDir(
+		pathToExtensionRoot,
+		'createClass',
 		'index.html',
 		'main.js',
 		'style.css', [
@@ -88,9 +127,14 @@ function activate(context) {
 	]);
 
 	openPanel(context, pathToExtensionRoot, htmlFile);	
+	createClass(context, pathToExtensionRoot, createClassHtml, { path: 'foo' });
 
 	context.subscriptions.push(vscode.commands.registerCommand('cpproj.start', function () {
 		openPanel(context, pathToExtensionRoot, htmlFile);
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('cpproj.createClass', e => {
+		createClass(context, pathToExtensionRoot, createClassHtml, e);
 	}));
 }
 

@@ -19,8 +19,21 @@
 				"command": "cpproj.start",
 				"title": "Start new CPProj session",
 				"category": "CPProj"
+			},
+			{
+				"command": "cpproj.createClass",
+				"title": "Create class",
+				"category": "CPProj"
 			}
-		]
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"when": "explorerResourceIsFolder",
+					"command": "cpproj.createClass"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"lint": "eslint .",
