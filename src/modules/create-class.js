@@ -23,16 +23,16 @@ function createClass(classData, pathToExtensionRoot) {
     const path = classData.where ? classData.where.replace(util.workspace(), '') : projectData.dirs.src;
 
     files.createFile(`${path}/${fullHeaderName}`, 
-        headerTemplate, [
-            { name: 'PARAM_CPPROJ_CLASS_NAME', value: classData.name }
-        ]
+        headerTemplate, {
+            PARAM_CPPROJ_CLASS_NAME: () => classData.name
+        }
     );
 
     files.createFile(`${path}/${fullSourceName}`,
-        sourceTemplate, [
-            { name: 'PARAM_CPPROJ_CLASS_NAME', value: classData.name },
-            { name: 'PARAM_CPPROJ_FILE_NAME', value: fullHeaderName }
-        ]
+        sourceTemplate, {
+            PARAM_CPPROJ_CLASS_NAME: () => classData.name,
+            PARAM_CPPROJ_FILE_NAME: () => fullHeaderName
+        }
     );
 
 }

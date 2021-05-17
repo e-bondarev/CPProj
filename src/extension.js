@@ -1,17 +1,9 @@
 const vscode = require('vscode');
 
-const webviewAssembler = require('./webviewAssembler');
-const structure = require('./structure');
-const files = require('./files');
-const util = require('./util');
-
-// function workspace() {
-// 	return vscode.workspace.workspaceFolders[0].uri.fsPath;
-// }
-
-// function configPath() {
-// 	return `${workspace()}/.cpproj.json`;
-// }
+const webviewAssembler = require('./modules/webviewAssembler');
+const structure = require('./modules/structure');
+const files = require('./modules/files');
+const util = require('./modules/util');
 
 function getDefaultProjectData() {
 	return {
@@ -91,7 +83,7 @@ function createClass(context, pathToExtensionRoot, htmlFile, e) {
 		async message => {
 			switch (message.command) {
 				case 'createClass':
-					const { createClass } = require('./createClass');
+					const { createClass } = require('./modules/create-class');
 					message.classData.where = e ? e.fsPath : undefined;
 					createClass(message.classData, pathToExtensionRoot);
 			}
@@ -108,24 +100,25 @@ function activate(context) {
 
 	const htmlFile = webviewAssembler.fromDir(
 		pathToExtensionRoot,
-		'layout',
+		'layouts/structure',
 		'index.html',
 		'main.js',
-		'style.css', [
-		'external/vue.js'
-	]);
+		'layouts/common-style.css',
+		'style.css', 
+		['external/vue.js']
+	);
 
 	const createClassHtml = webviewAssembler.fromDir(
 		pathToExtensionRoot,
-		'createClass',
+		'layouts/create-class',
 		'index.html',
 		'main.js',
-		'style.css', [
-		'external/vue.js'
-	]);
+		'layouts/common-style.css',
+		'style.css', 
+		['external/vue.js']
+	);
 
 	openPanel(context, pathToExtensionRoot, htmlFile);	
-	createClass(context, pathToExtensionRoot, createClassHtml);
 
 	context.subscriptions.push(vscode.commands.registerCommand('cpproj.start', function () {
 		openPanel(context, pathToExtensionRoot, htmlFile);

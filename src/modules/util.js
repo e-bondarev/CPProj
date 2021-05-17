@@ -18,8 +18,20 @@ function loadProjectData() {
 	return undefined;
 }
 
+function indexObject(obj, keySequence) {
+    const levels = keySequence.split('.');
+    var currentObject = obj;
+    
+    for (let i = 0; i < levels.length; i++) {
+        currentObject = currentObject[levels[i]];
+    }
+    
+    return currentObject;
+}
+
 module.exports = {
     workspace,
     configPath,
-    loadProjectData
+    loadProjectData,
+	indexObject
 };

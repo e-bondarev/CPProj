@@ -27,14 +27,17 @@ const createDir = function(path) {
     fs.mkdirSync(filePath);
 }
 
-const createFile = function(path, content, params = []) {
+const createFile = function(path, content, params, projectData) {
     const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     const filePath = wsPath + '/' + path;
     
     deleteIfExists(filePath);
 
-    for (var i = 0; i < params.length; i++) {
-        content = content.replaceAll(params[i].name, params[i].value);
+    if (params) {
+        const keys = Object.keys(params);
+        for (var i = 0; i < keys.length; i++) {
+            content = content.replaceAll(keys[i], params[keys[i]](projectData));
+        }
     }
 
     fs.appendFileSync(filePath, content);
@@ -48,6 +51,7 @@ module.exports = {
     deleteIfExists,
     entityExists,    
     createDir,
+    createFile,
     createFile,
     readFile
 };
