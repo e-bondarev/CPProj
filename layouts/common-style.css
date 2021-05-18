@@ -1,5 +1,5 @@
 #app {
-    margin: 20px;
+    margin: 0px 20px;
 }
 
 .option {
@@ -18,8 +18,8 @@ input:not([type=radio]):not([type=checkbox]):not(.smaller) {
 }
 
 .card {
-    border: 2px solid #535353;
-    border-radius: 5px;
+    border: 1px solid #535353;
+    /* border-radius: 5px; */
     padding: 0px 9px;
     margin-bottom: 5px;
 }
@@ -39,8 +39,34 @@ input, select {
     flex-direction: row;
     margin-top: 10px;
     border-top: 1px solid #535353;
+    font-size: small;
 }
 
 .secondary-settings, .submodules {
     margin-left: 20px;
+}
+
+.create-button {
+    margin-left: 30px;
+}
+
+.flex {
+    display: flex;
+}
+
+/* overloading */
+
+button, input, select {
+    border-radius: 0px;
+}
+
+button {
+    color: #fff;
+    padding: 0px 8px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+p {
+    margin: 0px;
 }

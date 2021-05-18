@@ -3,40 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/mvp.css">
     <title>CPProj</title>
 </head>
 <body>
 	<div id="app">
-		<h1>Welcome to CPProj</h1>
-	
-		<button @click="createStructure">
-			Create structure
-		</button>
+		<div class="flex">
+			<h1>Welcome to CPProj</h1>
+		
+			<button class="create-button" @click="createStructure">
+				Create structure
+			</button>
+		</div>
 		
 		<div class="container">
 			<div class="primary-settings">
 				<h2>Primary settings</h2>
 
 				<div class="option">
-					<label>Project name</label><br>
+					<p>Project name</p>
 					<input type="text" v-model="project.name">
 				</div>
 
 				<div class="option">
-					<label>Version</label><br>
+					<p>Version</p>
 					<input type="text" v-model="project.version">
 				</div>
 		
 				<div class="option">
-					<input type="radio" id="application" value="Application" v-model="project.type">
-					<label for="application">Application</label>
-					<br>
-					<input type="radio" id="library" value="Library" v-model="project.type">
-					<label for="library">Library</label>
+					<div class="flex">
+						<input type="radio" id="application" value="Application" v-model="project.type">
+						<p for="application">Application</p>
+					</div>
+					<div class="flex">
+						<input type="radio" id="library" value="Library" v-model="project.type">
+						<p for="library">Library</p>
+					</div>
 				</div>
 		
 				<div class="option">
-					<label>{{ project.type }} name</label><br>
+					<p>{{ project.type }} name</p>
 					<input v-model="project.appOrLibName">
 				</div>
 			</div>
@@ -45,16 +51,21 @@
 				<h2>Secondary settings</h2>
 
 				<div class="option">
-					<label>Folder for external dependencies</label><br>
+					<p>Folder for external dependencies</p>
 					<input type="text" v-model="project.dirs.external">
 				</div>
 				
 				<div class="option">
-					<label>Folder for source files</label><br>
+					<p>Folder for build files</p>
+					<input type="text" v-model="project.dirs.build">
+				</div>
+				
+				<div class="option">
+					<p>Folder for source files</p>
 					<input type="text" v-model="project.dirs.src">
 				</div>
 
-				<label>Source and header formats</label><br>
+				<p>Source and header formats</p>
 				<div class="row">
 					<div class="option">
 						<select v-model="project.formats.source">
@@ -71,11 +82,6 @@
 							<option value="hxx">hxx</option>
 						</select>
 					</div>
-				</div>
-				
-				<div class="option">
-					<label>Folder for build files</label><br>
-					<input type="text" v-model="project.dirs.build">
 				</div>
 
 				<div class="option">
@@ -98,15 +104,11 @@
 						<h3>Submodule {{ project.submodules.length - i }}</h3>
 						<button @click="removeSubmodule(i)">X</button>
 					</div>
-					<div class="option">
-						<input class="smaller" placeholder="URL" type="text" v-model="submodule.url">
-						<input class="smaller" placeholder="Desired name" type="text" v-model="submodule.name">
-					</div>					
-					<div class="option">
-						<input class="smaller" placeholder="cmake" type="text" v-model="submodule.cmake">
-						<input class="smaller" placeholder="lib" type="text" v-model="submodule.lib">
-						<input class="smaller" placeholder="include" type="text" v-model="submodule.include">
-					</div>					
+					<input class="smaller" placeholder="URL" type="text" v-model="submodule.url">
+					<input class="smaller" placeholder="Desired name" type="text" v-model="submodule.name">
+					<input class="smaller" placeholder="cmake" type="text" v-model="submodule.cmake">
+					<input class="smaller" placeholder="lib" type="text" v-model="submodule.lib">
+					<input class="smaller" placeholder="include" type="text" v-model="submodule.include">
 				</div>
 			</div>
 		</div>

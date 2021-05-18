@@ -21,6 +21,7 @@ const defaultStructure = [
 			PARAM_PROJECTOR_PROJECT_VERSION: proj => proj.version,
 
 			PARAM_PROJECTOR_APP_NAME:        proj => proj.appOrLibName,
+			PARAM_PROJECTOR_TYPE:        	 proj => proj.type == 'Application' ? 'executable' : 'library',
 
 			PARAM_PROJECTOR_SRC_DIR_NAME:    proj => convert.toCase(proj.dirs.src, proj.codeCase),
 			PARAM_PROJECTOR_PCH_NAME:		 proj => `${convert.toCase(proj.pch, proj.codeCase)}.${proj.formats.header}`,
