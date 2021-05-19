@@ -56,8 +56,15 @@ input, select {
 
 /* overloading */
 
+:root {
+    --color-text: var(--vscode-editor-foreground);
+    --color: var(--vscode-button-background);
+    --color-bg: var(--vscode-editor-background);
+}
+
 button, input, select {
     border-radius: 0px;
+    outline: none;
 }
 
 button {

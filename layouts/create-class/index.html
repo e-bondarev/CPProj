@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/mvp.css">
     <title>Create class</title>
 </head>
 <body>
@@ -12,12 +13,12 @@
         <div class="container">
             <div class="primary-settings">
                 <div class="option">
-                    <label>Class name</label><br>
+                    <p>Class name</p>
                     <input v-model="classData.name" id="name" type="text" autofocus>
                 </div>
                 <div class="option">
-                    <div class="row">
-                        <label>Header-only</label><br>
+                    <div class="flex">
+                        <p>Header-only</p>
                         <input v-model="classData.headerOnly" type="checkbox">
                     </div>
                 </div>

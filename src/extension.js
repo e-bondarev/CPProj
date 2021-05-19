@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 
-const webviewAssembler = require('./modules/webviewAssembler');
+const webviewAssembler = require('./modules/webview-assembler');
 const structure = require('./modules/structure');
 const files = require('./modules/files');
 const util = require('./modules/util');
