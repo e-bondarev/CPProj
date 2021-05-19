@@ -12,6 +12,14 @@ CPProj is an extension for Visual Studio Code that helps you create and manage C
 
 CMake v3.12+
 
+## Usage
+
+1. Open a folder with VSCode where you want your project to be located.
+Press F1, type in "CPProj" and press "Start new session".
+2. Use the intiutive input fields to manipulate your project's settings.
+3. Once you're satisfied with the settings, press "Create structure".
+4. (In order to generate build files and compile the project I highly recommend using <a href="#">CMake Tools</a> extension.)
+
 -----------
 ## Working with Markdown
 
