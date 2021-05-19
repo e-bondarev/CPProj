@@ -2,7 +2,7 @@
 
 CPProj is an extension for Visual Studio Code that helps you create and manage C++ projects based on CMake.
 
-## Motivation
+## Motivation - DRY
 
 I like programming in C++. I create lots of different projects to try different things. Recently, I found myself doing the same things over and over again, like writing the same CMakeLists.txt, linking the same libraries, executing the same commands. I don't like repeating myself. I built this extension to stop doing that.
 
@@ -32,4 +32,8 @@ Press F1, type in "CPProj" and press "Start new session".
 ### Adding a new class
 
 1. Right-click any folder in your project and press "Create class"
-2. Choose a name for your class and hit Enter of press 
+2. Choose a name for your class and hit Enter of press "Create"
+
+## Distant goals
+
+* Simplification
