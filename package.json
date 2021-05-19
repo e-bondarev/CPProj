@@ -1,7 +1,11 @@
 {
-	"name": "projector",
-	"displayName": "Projector",
+	"name": "cpproj",
+	"publisher": "e-bondarev",
+	"displayName": "CPProj",
 	"description": "",
+	"repository": {
+		"url": "https://github.com/e-bondarev/CPProj"
+	},
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.56.0"
